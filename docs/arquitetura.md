@@ -19,6 +19,10 @@ O sistema segue o modelo de arquitetura de containers, separando as responsabili
 O EcoScore Scanner interage com dois atores principais: o **Consumidor**, que realiza buscas e visualiza scores, e o **Administrador**, que gerencia o catálogo de produtos e parâmetros de cálculo.
 
 ### Nível 2: Diagrama de Containers
+Abaixo está a representação visual dos containers que compõem o EcoScore Scanner e como eles se comunicam:
+
+![Diagrama de Containers C4](./diagrama_c4_containers.png)
+
 1.  **Web Application (React):** Interface onde o usuário interage com o sistema.
 2.  **API Application (Node.js):** Responsável por processar a lógica de cálculo do Eco-Score e expor os endpoints de consulta e gestão.
 3.  **Database (PostgreSQL):** Armazena as entidades de produtos, critérios de sustentabilidade e registros administrativos.
