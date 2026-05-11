@@ -1,0 +1,4 @@
+# Demonstração do Projeto - TP3
+O vídeo de demonstração do funcionamento do EcoScore Scanner pode ser assistido no link abaixo:
+
+[Assista aqui ao vídeo no Google Drive](https://drive.google.com/file/d/1AWp2gDNDfV6EDENbF-N2705NvDcK-94r/view?usp=sharing)
