@@ -1,24 +1,13 @@
 const express = require('express');
 const cors = require('cors');
 const { PrismaClient } = require('@prisma/client');
+const { calculateEcoScore } = require('./ecoscore');
 
 const prisma = new PrismaClient();
 const app = express();
 
 app.use(cors());
 app.use(express.json());
-
-// Motor de Cálculo do Eco-Score
-function calculateEcoScore(product) {
-    let score = 10; 
-    
-    // Regras de negócio simples (desconta pontos baseado no impacto)
-    if (product.packaging === 'plastico') score -= 4;
-    if (product.packaging === 'reciclavel') score -= 1;
-    if (product.origin === 'importado') score -= 3;
-    
-    return Math.max(0, score); // Impede que a nota fique negativa
-}
 
 // Rota principal: Busca o produto e calcula a nota na hora
 app.get('/api/products/search', async (req, res) => {
