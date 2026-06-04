@@ -1,0 +1,36 @@
+name: EcoScore CI - Testes Automatizados
+
+# Gatilhos: A pipeline vai rodar sempre que houver um push ou Pull Request para a branch 'main'
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  testes-backend:
+    runs-on: ubuntu-latest # O GitHub liga uma máquina virtual Ubuntu (Runner)
+
+    # Informa que os comandos devem rodar dentro da pasta backend
+    defaults:
+      run:
+        working-directory: ./backend
+
+    steps:
+    # 1. Faz o download do código do repositório para a máquina virtual
+    - name: Fazer Checkout do Código
+      uses: actions/checkout@v4
+
+    # 2. Prepara o ambiente instalando o Node.js
+    - name: Configurar Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18' # Versão estável do Node
+
+    # 3. Instala as dependências do backend
+    - name: Instalar Dependências
+      run: npm install
+
+    # 4. Roda a suite de testes automatizados com o Jest
+    - name: Executar Testes Unitários
+      run: npm test

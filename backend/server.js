@@ -17,17 +17,29 @@ function calculateEcoScore(product) {
     return Math.max(0, score);
 }
 
-// [RF03] e [RF04] Busca, Score e [RF05] Recomendação de Alternativas
+// ==========================================
+// ROTAS DE BUSCA E SUGESTÃO
+// ==========================================
+
+// Busca com Filtro Avançado (Nome e Categoria)
 app.get('/api/products/search', async (req, res) => {
-    const { name } = req.query;
+    const { name, category } = req.query;
     
     try {
+        // Monta a query dinamicamente
+        let whereClause = { name: { contains: name, mode: 'insensitive' } };
+        
+        // Se o usuário selecionou uma categoria no filtro, adiciona à query
+        if (category) {
+            whereClause.category = category;
+        }
+
         const product = await prisma.product.findFirst({
-            where: { name: { contains: name, mode: 'insensitive' } }
+            where: whereClause
         });
 
         if (!product) {
-            return res.status(404).json({ error: 'Produto não encontrado' });
+            return res.status(404).json({ error: 'Produto não encontrado ou não corresponde ao filtro.' });
         }
 
         const score = calculateEcoScore(product);
@@ -55,7 +67,23 @@ app.get('/api/products/search', async (req, res) => {
     }
 });
 
-// [RF01] Cadastro de Produtos (Painel Administrativo)
+// ==========================================
+// ROTAS DO PAINEL ADMINISTRATIVO (CRUD)
+// ==========================================
+
+// Listar todos os produtos (Para a tabela do Admin)
+app.get('/api/products', async (req, res) => {
+    try {
+        const products = await prisma.product.findMany({
+            orderBy: { id: 'desc' } 
+        });
+        res.json(products);
+    } catch (error) {
+        res.status(500).json({ error: 'Erro ao buscar produtos' });
+    }
+});
+
+// Cadastro de Produtos
 app.post('/api/products', async (req, res) => {
     const { name, category, packaging, origin } = req.body;
 
@@ -73,7 +101,65 @@ app.post('/api/products', async (req, res) => {
     }
 });
 
-// Rota auxiliar para popular banco
+// Atualizar (Update) Produto
+app.put('/api/products/:id', async (req, res) => {
+    const { id } = req.params;
+    const { name, category, packaging, origin } = req.body;
+    
+    try {
+        const updatedProduct = await prisma.product.update({
+            where: { id: parseInt(id) },
+            data: { name, category, packaging, origin }
+        });
+        res.json(updatedProduct);
+    } catch (error) {
+        res.status(500).json({ error: 'Erro ao atualizar produto.' });
+    }
+});
+
+// Excluir (Delete) Produto
+app.delete('/api/products/:id', async (req, res) => {
+    const { id } = req.params;
+    
+    try {
+        await prisma.product.delete({
+            where: { id: parseInt(id) }
+        });
+        res.json({ message: 'Produto excluído com sucesso' });
+    } catch (error) {
+        res.status(500).json({ error: 'Erro ao excluir produto.' });
+    }
+});
+
+// ==========================================
+// ROTAS DO DASHBOARD (MÉTRICAS)
+// ==========================================
+
+// Obter dados analíticos
+app.get('/api/metrics', async (req, res) => {
+    try {
+        const products = await prisma.product.findMany();
+        const total = products.length;
+        
+        if (total === 0) {
+            return res.json({ total: 0, averageScore: 0 });
+        }
+
+        // Soma os scores de todos os produtos e divide pelo total
+        const totalScore = products.reduce((acc, curr) => acc + calculateEcoScore(curr), 0);
+        const averageScore = (totalScore / total).toFixed(1);
+
+        res.json({ total, averageScore });
+    } catch (error) {
+        res.status(500).json({ error: 'Erro ao gerar métricas.' });
+    }
+});
+
+// ==========================================
+// ROTA AUXILIAR (SEED)
+// ==========================================
+
+// Rota para popular banco rapidamente
 app.get('/api/seed', async (req, res) => {
     try {
         await prisma.product.deleteMany();
@@ -87,7 +173,7 @@ app.get('/api/seed', async (req, res) => {
                 { name: 'Shampoo Solido', category: 'Cosmeticos', packaging: 'reciclavel', origin: 'local' }
             ]
         });
-        res.send('✅ Banco de dados populado para o TP4!');
+        res.send('✅ Banco de dados populado com sucesso!');
     } catch (error) {
         res.status(500).json({ error: 'Erro ao popular banco.' });
     }
