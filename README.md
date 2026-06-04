@@ -9,7 +9,10 @@ Abordar a **Produção e Consumo Responsáveis**, combatendo a falta de transpar
 ## 🚀 A Solução
 Um sistema Web Full-stack que permite a consulta de produtos, processa critérios de sustentabilidade no backend (como materiais de embalagem e logística) e apresenta um feedback visual e educativo ao consumidor.
 
-## 🛠 Tech Stack (Sugestão)
-- **Frontend:** React + Tailwind CSS
+## 🛠 Tech Stack
+- **Frontend:** React (Vite) + CSS
 - **Backend:** Node.js + Express
-- **Banco de Dados:** PostgreSQL (Prisma ORM)
+- **Banco de Dados:** PostgreSQL (via Docker) + Prisma ORM
+
+---
+
