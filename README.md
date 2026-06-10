@@ -13,6 +13,5 @@ Um sistema Web Full-stack que permite a consulta de produtos, processa critério
 - **Frontend:** React (Vite) + CSS
 - **Backend:** Node.js + Express
 - **Banco de Dados:** PostgreSQL (via Docker) + Prisma ORM
-
 ---
 
